@@ -5,9 +5,12 @@
 - 上游代码：https://github.com/jonnyan404/verysync
 
 # 注释
-本文中所有尖角括号包含的内容，均需要手动调整，
+本文中所有尖角括号包含的内容，均需要手动调整
+
 *不要无脑复制粘贴*
+
 *不要无脑复制粘贴*
+
 *不要无脑复制粘贴*
 
 # 1.准备
@@ -58,7 +61,9 @@ podman run -d --name verysync \
 localhost/<your_tag_name>
 ```
 * 8886/tcp是WebGUI端口
+
 * 22330/tcp是数据传输TCP端口
+
 * 浏览器打开 <http://IP:8886> 即可访问.
 ### 4.2 (可选)开放更多端口
 ```bash
@@ -71,7 +76,9 @@ podman run -d --name verysync \
 localhost/<your_tag_name>
 ```
 * 3000/tcp是微力中继服务默认端口
+
 * 22027/udp是局域网节点IP发现端口
+
 * 22067/udp是中继服务器连接端口
 ### 4.3 (推荐)数据持久化
 ```bash
@@ -85,11 +92,17 @@ localhost/<your_tag_name>
 
 # 5.配置为systemd服务
 参考链接：
+
 [Make systemd better for Podman with Quadlet](https://www.redhat.com/sysadmin/quadlet-podman)
+
 [与 podman generate systemd 命令相比，使用 Quadlets 的优点](https://docs.redhat.com/zh_hans/documentation/red_hat_enterprise_linux/8/html/building_running_and_managing_containers/advantages-of-using-quadlets-over-the-podman-generate-systemd-command_assembly_porting-containers-to-systemd-using-podman)
+
 从podman4.4开始 podman主线加入了一个功能叫做quadlet，可以简化容器部署，且更易于编写和维护
+
 描述容器的文件，文件名可以修改，后缀名必须为`.container`
+
 示例：`/etc/containers/systemd/verysync.container`
+
 ```bash
 [Unit]
 Description=Verysync container service
