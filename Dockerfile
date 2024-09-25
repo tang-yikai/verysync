@@ -3,7 +3,7 @@ ENV TZ=Asia/Shanghai \
     PORT=8886 \
     VUID=0
 WORKDIR /app
-COPY verysync-linux-amd64-*/verysync /tmp/
+COPY files/verysync-linux-amd64-*/verysync /tmp/
 COPY docker-entrypoint.sh /app
 
 RUN chmod 0755 /tmp/verysync \
