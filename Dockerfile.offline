@@ -1,0 +1,23 @@
+FROM docker.io/library/busybox:1.36.1-glibc
+ENV TZ=CST-8 \
+    PORT=8886 \
+    VUID=0
+WORKDIR /app/
+COPY verysync-linux-amd64-*/verysync /tmp/
+COPY docker-entrypoint.sh /app/
+COPY gosu /usr/local/bin/
+
+RUN chmod 0755 /tmp/verysync \
+    && mv /tmp/verysync /usr/bin/ \
+    && mkdir -p /data/ \
+    && chmod 0775 /data/ \
+    && addgroup -S nonverysync && adduser -S nonverysync -G nonverysync \
+    && chmod 0755 /app/docker-entrypoint.sh
+
+RUN chmod 0755 /usr/local/bin/gosu \
+    && gosu nobody true
+
+HEALTHCHECK --interval=1m --timeout=5s --start-period=15s \
+  CMD nc -z 127.0.0.1 ${PORT}  || bash -c 'kill -s 15 -1 && (sleep 4; kill -s 9 -1)'
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
