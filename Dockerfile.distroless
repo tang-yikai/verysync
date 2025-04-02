@@ -1,0 +1,10 @@
+FROM gcr.io/distroless/static-debian12
+WORKDIR /app/
+COPY --chmod=0755 files/verysync-linux-amd64-*/verysync /usr/bin/verysync
+COPY --chmod=0755 files/data /data
+COPY --chmod=0755 files/data/.config /data/.config
+
+HEALTHCHECK --interval=1m --timeout=5s --start-period=15s \
+  CMD nc -z 127.0.0.1 ${PORT}  || bash -c 'kill -s 15 -1 && (sleep 4; kill -s 9 -1)'
+
+ENTRYPOINT ["/usr/bin/verysync", "--no-browser", "-home", "/data/.config", "-gui-address", ":8886"]
