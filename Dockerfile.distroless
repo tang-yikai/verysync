@@ -15,7 +15,4 @@ COPY --from=builder --chmod=0775 /data /data
 COPY --from=builder --chmod=0775 /data/.config /data/.config
 COPY --from=builder --chmod=0755 /verysync/verysync-linux-*-*/verysync /usr/bin/verysync
 
-HEALTHCHECK --interval=1m --timeout=5s --start-period=15s \
-  CMD nc -z 127.0.0.1 ${PORT}  || bash -c 'kill -s 15 -1 && (sleep 4; kill -s 9 -1)'
-
 ENTRYPOINT ["/usr/bin/verysync", "--no-browser", "-home", "/data/.config", "-gui-address", ":8886"]
