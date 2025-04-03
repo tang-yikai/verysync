@@ -1,10 +1,32 @@
+FROM quay.io/almalinuxorg/9-base:9.5 as builder
+ENV version=v2.20.1
+ARG ARCH
+ENV arch=$ARCH
+RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+  -e 's|^# baseurl=https://repo.almalinux.org|baseurl=https://mirrors.aliyun.com|g' \
+  -i /etc/yum.repos.d/almalinux*.repo
+RUN dnf makecache \
+  && dnf install -y git make gcc
+RUN mkdir /verysync \
+  && curl -o /verysync/verysync-linux-${arch}-${version}.tar.gz http://dl.verysync.com/releases/${version}/verysync-linux-${arch}-${version}.tar.gz \
+  && tar -xvf /verysync/verysync-linux-${arch}-${version}.tar.gz -C /verysync/
+RUN mkdir /git && cd /git \
+  && git clone https://github.com/Jonnyan404/verysync/ \
+  && sed -i "s/gosu/su-exec/g" /git/verysync/docker-entrypoint.sh\
+  && git clone https://github.com/ncopa/su-exec \
+  && cd /git/su-exec \
+  && make
+RUN mkdir -p /data/.config
+
 FROM gcr.io/distroless/static-debian12
 WORKDIR /app/
-COPY --chmod=0755 files/verysync-linux-amd64-*/verysync /usr/bin/verysync
-COPY --chmod=0755 files/data /data
-COPY --chmod=0755 files/data/.config /data/.config
+COPY --from=builder --chmod=0775 /data /data
+COPY --from=builder --chmod=0775 /data/.config /data/.config
+COPY --from=builder --chmod=0755 /git/su-exec/su-exec /usr/local/bin/su-exec
+COPY --from=builder --chmod=0755 /verysync/verysync-linux-*-*/verysync /usr/bin/verysync
+COPY --from=builder --chmod=0755 /git/verysync/docker-entrypoint.sh /app
 
 HEALTHCHECK --interval=1m --timeout=5s --start-period=15s \
   CMD nc -z 127.0.0.1 ${PORT}  || bash -c 'kill -s 15 -1 && (sleep 4; kill -s 9 -1)'
 
-ENTRYPOINT ["/usr/bin/verysync", "--no-browser", "-home", "/data/.config", "-gui-address", ":8886"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
