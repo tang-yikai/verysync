@@ -1,8 +1,10 @@
-FROM quay.io/almalinuxorg/9-base:9.5 as builder
+FROM alpine as builder
 ENV version=v2.20.1
 ARG ARCH
 ENV arch=$ARCH
-RUN mkdir /verysync \
+RUN apk update \
+  && apk add curl \
+  && mkdir /verysync \
   && curl -o /verysync/verysync-linux-${arch}-${version}.tar.gz http://dl.verysync.com/releases/${version}/verysync-linux-${arch}-${version}.tar.gz \
   && tar -xvf /verysync/verysync-linux-${arch}-${version}.tar.gz -C /verysync/
 RUN mkdir -p /data/.config
