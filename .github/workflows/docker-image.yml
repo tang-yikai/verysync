@@ -22,7 +22,8 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
           fi
-          echo ::set-output name=tags::${VERSION}            push-ghcr:
+          echo ::set-output name=tags::${VERSION}
+  push-ghcr:
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Shanghai
