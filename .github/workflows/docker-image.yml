@@ -2,8 +2,7 @@ name: Build and Publish Image
 
 on:
   push:
-    branches: [ main ]  # 触发分支
-  pull_request: {}      # 可选：在 PR 时也触发
+    branches: [ master ]  # 触发分支
 
 env:
   REGISTRY: ghcr.io
