@@ -4,11 +4,11 @@ on:
   push:
     tags:
       - "v*"  # 匹配所有以 v 开头的标签（如 v1.0.0）
-    branches: [ master ]  # 触发分支
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}  # 格式：<用户名/仓库名>
+  VER: ${GITHUB_REF/refs\/tags\//}
 
 jobs:
   build-podman-image:
@@ -46,7 +46,7 @@ jobs:
         ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/' -e 's/armv7l/arm/')
        
         # 构建镜像标签
-        TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+        TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VER }}
 
         # 执行构建
         podman build \
