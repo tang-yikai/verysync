@@ -2,10 +2,9 @@ name: Build and Publish Image
 
 on:
   workflow_dispatch:
-    types: [manual-trigger]
   push:
-    tags:
-      - "v*"  # 匹配所有以 v 开头的标签（如 v1.0.0）
+    branches: [ main ]
+    tags: [ "v*" ] # 匹配所有以 v 开头的标签（如 v1.0.0）
 
 env:
   REGISTRY: ghcr.io
