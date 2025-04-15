@@ -38,15 +38,11 @@ jobs:
     # 构建镜像并设置标签
     - name: Build with Podman
       run: |
-        ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/' -e 's/armv7l/arm/')
         # 获取架构信息
-        ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/' -e 's/armv7l/arm/')
-        
-        # 自动提取 Git 标签（格式：v1.0.0）
-        VERSION_TAG=${GITHUB_REF/refs\/tags\//}  # 当触发事件为 tag 时，GITHUB_REF_NAME=标签名
-        
+        ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/' -e 's/armv7l/arm/')        
+       
         # 构建镜像标签
-        TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION_TAG
+        TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref }}
         SHA_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
         # 执行构建
