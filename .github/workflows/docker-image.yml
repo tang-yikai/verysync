@@ -2,6 +2,8 @@ name: Build and Publish Image
 
 on:
   push:
+    tags:
+      - "v*"  # 匹配所有以 v 开头的标签（如 v1.0.0）
     branches: [ master ]  # 触发分支
 
 env:
@@ -25,7 +27,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y podman
 
-    # 登录容器仓库（您已提供的部分）
+    # 登录容器仓库
     - name: Log in to the Container registry
       uses: docker/login-action@v3
       with:
@@ -37,15 +39,24 @@ jobs:
     - name: Build with Podman
       run: |
         ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/' -e 's/armv7l/arm/')
-        TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        # 获取架构信息
+        ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/' -e 's/armv7l/arm/')
+        
+        # 自动提取 Git 标签（格式：v1.0.0）
+        VERSION_TAG=${GITHUB_REF_NAME}  # 当触发事件为 tag 时，GITHUB_REF_NAME=标签名
+        
+        # 构建镜像标签
+        TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION_TAG
         SHA_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
         # 执行构建
         podman build \
           --build-arg ARCH="$ARCH" \
           -t "$TAG" \
+          -t "$SHA_TAG" \
           -f Dockerfile.distroless \
           .
 
         # 推送镜像
         podman push "$TAG"
+        podman push "$SHA_TAG"
