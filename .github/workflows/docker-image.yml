@@ -43,7 +43,7 @@ jobs:
         ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/' -e 's/armv7l/arm/')
         
         # 自动提取 Git 标签（格式：v1.0.0）
-        VERSION_TAG=${GITHUB_REF_NAME}  # 当触发事件为 tag 时，GITHUB_REF_NAME=标签名
+        VERSION_TAG=${GITHUB_REF/refs\/tags\//}  # 当触发事件为 tag 时，GITHUB_REF_NAME=标签名
         
         # 构建镜像标签
         TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION_TAG
