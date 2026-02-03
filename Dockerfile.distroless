@@ -9,7 +9,7 @@ RUN apk update \
   && tar -xvf /verysync/verysync-linux-${arch}-${version}.tar.gz -C /verysync/
 RUN mkdir -p /data/.config
 
-FROM gcr.io/distroless/static-debian12
+FROM gcr.io/distroless/static-debian13
 WORKDIR /app/
 COPY --from=builder --chmod=0775 /data /data
 COPY --from=builder --chmod=0775 /data/.config /data/.config
