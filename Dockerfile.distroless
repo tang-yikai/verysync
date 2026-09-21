@@ -1,5 +1,5 @@
 FROM alpine as builder
-ENV version=v2.31.0
+ENV version=v2.32.0
 ARG ARCH
 ENV arch=$ARCH
 RUN apk update \
